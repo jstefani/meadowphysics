@@ -289,9 +289,14 @@ local function Meadowphysics ()
   --
   --  encoders
   --
+  -- E1 nudges the norns clock tempo (the sequencer clock.syncs to it, so it
+  -- follows when clock source is internal)
   -- E3 scrolls the grid view left/right on grids narrower than 16 columns
   function mp:handle_enc(n, d)
-    if n == 3 then
+    if n == 1 then
+      params:delta("clock_tempo", d)
+      redraw()
+    elseif n == 3 then
       mp_grid:scroll(d)
       redraw()
       mp_grid:draw(mp)

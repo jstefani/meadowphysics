@@ -22,6 +22,7 @@ https://monome.org/docs/modular/ansible/
 
 ```
 hold k1:      alt. k2 play/pause, k3 reset
+e1:           tempo (norns clock)
 e3:           scroll grid view (8x8 grids only, no-op on a 128)
 ```
 

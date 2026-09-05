@@ -33,6 +33,11 @@ function meadowphysics_ui.new (mp)
           screen.level(1)
         end
       end
+      -- tempo readout (E1)
+      screen.level(4)
+      screen.font_size(8)
+      screen.move(0, 62)
+      screen.text(string.format("%.0f", params:get("clock_tempo")))
       -- on a narrow grid, underline the columns currently visible
       if mp.grid and mp.grid:max_offset() > 0 then
         local lo, hi = mp.grid:visible_range()
