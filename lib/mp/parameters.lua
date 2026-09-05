@@ -64,6 +64,17 @@ setup_params = function(mp)
     options = {"no", "yes"}
   }
 
+
+  params:add {
+    type = "option",
+    id = "monobright",
+    name = "use monobright grid",
+    options = {"no", "yes"},
+    action = function(value)
+      mp.grid:set_monobright(value == 2)
+    end
+  }
+
 end
 
 return setup_params
