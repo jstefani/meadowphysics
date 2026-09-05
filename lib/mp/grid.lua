@@ -45,7 +45,7 @@ function grid.detect_monobright(device)
 end
 
 -- Serial and name as the detector sees them, for troubleshooting from the
--- maiden repl: print(mp.grid.identify())
+-- maiden repl: print(include("meadowphysics/lib/mp/grid").identify())
 function grid.identify()
   local dev = g.device or g
   return string.format("serial=%q name=%q %dx%d -> %s",
