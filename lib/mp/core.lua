@@ -286,7 +286,21 @@ local function Meadowphysics ()
   -- grid keys
   --
 
+  --
+  --  encoders
+  --
+  -- E3 scrolls the grid view left/right on grids narrower than 16 columns
+  function mp:handle_enc(n, d)
+    if n == 3 then
+      mp_grid:scroll(d)
+      redraw()
+      mp_grid:draw(mp)
+    end
+  end
+
   function mp:handle_grid_input(x, y, z)
+    -- map device column to logical column (see grid.lua scroll)
+    x = mp_grid:to_logical_x(x)
     -- update grid key state
     mp.state.grid_keys[y][x] = z
 

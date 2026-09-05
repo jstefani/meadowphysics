@@ -18,6 +18,13 @@ https://monome.org/docs/modular/ansible/
 --
 --
 
+## keys and encoders
+
+```
+hold k1:      alt. k2 play/pause, k3 reset
+e3:           scroll grid view (8x8 grids only, no-op on a 128)
+```
+
 ## monobright grids
 
 Using a 40h or series (monobright) grid? Set PARAMS > MEADOWPHYSICS >

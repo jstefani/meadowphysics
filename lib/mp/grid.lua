@@ -15,7 +15,38 @@ function grid:set_monobright(on)
   monobright = on and true or false
 end
 
+-- horizontal scroll for grids narrower than 16 columns (e.g. 8x8).
+-- offset = how many logical columns the view is shifted right. on a 128
+-- max_offset() is 0, so scrolling is a no-op there.
+grid.offset = 0
+
+local function cols()
+  local c = g.cols
+  if c == nil or c == 0 then return 16 end
+  return c
+end
+
+function grid:max_offset()
+  return math.max(0, 16 - cols())
+end
+
+function grid:scroll(d)
+  self.offset = util.clamp(self.offset + d, 0, self:max_offset())
+end
+
+-- device column -> logical (16-wide) column
+function grid:to_logical_x(x)
+  return x + self.offset
+end
+
+-- first and last logical columns currently visible
+function grid:visible_range()
+  return self.offset + 1, self.offset + cols()
+end
+
 local function led(x, y, l)
+  x = x - grid.offset
+  if x < 1 or x > cols() then return end
   if monobright then
     l = (l >= MONO_ON_THRESHOLD) and 15 or 0
   end

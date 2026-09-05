@@ -54,6 +54,10 @@ function key(n,z)
   meadowphysics:handle_key(n,z)
 end
 
+function enc(n, d)
+  meadowphysics:handle_enc(n, d)
+end
+
 function g.key(x, y, z) 
   meadowphysics:handle_grid_input(x, y, z)
 end

@@ -33,6 +33,14 @@ function meadowphysics_ui.new (mp)
           screen.level(1)
         end
       end
+      -- on a narrow grid, underline the columns currently visible
+      if mp.grid and mp.grid:max_offset() > 0 then
+        local lo, hi = mp.grid:visible_range()
+        local y = offset_y + (padding * #mp.voices) + 2
+        screen.level(4)
+        screen.rect(offset_x + (lo - 1) * padding, y, (hi - lo) * padding + 2, 1)
+        screen.fill()
+      end
     -- end
   end
 
