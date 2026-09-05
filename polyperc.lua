@@ -13,7 +13,7 @@
 --
 --
 
-local meadowphysics = include("meadowphysics/lib/mp/core")()
+local meadowphysics = include("lib/mp/core")()
 local hs = include('lib/halfsecond')
 
 g = grid.connect()
@@ -36,6 +36,7 @@ end
 
 
 function init_engine ()
+  params:add_separator()
   cs_AMP = controlspec.new(0,1,'lin',0,0.5,'')
   params:add{
     type="control",id="amp",controlspec=cs_AMP,
@@ -100,4 +101,8 @@ function redraw()
   screen.clear()
   meadowphysics:draw()
   screen.update()
+end
+
+function cleanup()
+  meadowphysics:all_notes_off()
 end

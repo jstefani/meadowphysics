@@ -14,49 +14,44 @@
 --
 
 local meadowphysics = include("lib/mp/core")()
-local g = grid.connect()
+g = grid.connect()
+
+engine.name="MxSynths"
+local mxsynths_=include("mx.synths/lib/mx.synths")
+local notelength = 3
+
+
 
 -- voicing
 
-local Ack = include("ack/lib/ack")
-engine.name = 'Ack'
-
 function trigger(note_num, hz, voice)
-  engine.trig(voice-1)
+  engine.mx_note_on(note_num,1,notelength)
 end
 
 function gate_high(note_num, hz, voice)
+  engine.mx_note_on(note_num,1,notelength)
 end
 
 function gate_low(note_num, hz, voice)
-
+  engine.mx_note_off(note_num)
 end
-
-function init_engine ()
-  params:add_separator()
-  Ack.add_params()
-  for i=1, meadowphysics.voice_count do
-    -- Ack.add_channel_params(i)
-  end
-end
-
-
-
-
+  
 -- core stuff
 
 function init()
   meadowphysics.init()
+  mxsynths=mxsynths_:new()
   params:add_separator()
-  init_engine()
+  cs_AMP = controlspec.new(0,60,'lin',0,0.1,'')
+  params:add{
+    type="control",id="note length",controlspec=cs_AMP,
+    action=function(x) notelength = x end
+  }
+  
 end
 
 function key(n,z)
   meadowphysics:handle_key(n,z)
-end
-
-function enc(n, d)
-  meadowphysics:handle_enc(n, d)
 end
 
 function g.key(x, y, z) 
@@ -72,3 +67,4 @@ end
 function cleanup()
   meadowphysics:all_notes_off()
 end
+

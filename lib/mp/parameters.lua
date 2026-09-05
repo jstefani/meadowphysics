@@ -1,12 +1,13 @@
 setup_params = function(mp)
 
-  params:add_group("MEADOWPHYSICS ", 10)
+  params:add_separator()
 
   -- Voices
   params:add {
     type = "option",
     id = "output",
     name = "output",
+    default = 1,
     options = {
       "audio", "midi", "audio + midi",
       "crow 1-4 trigs", "just friends notes", "just friends shapes"
@@ -58,18 +59,11 @@ setup_params = function(mp)
 
   params:add {
     type = "option",
-    id = "instant_trigger",
+    id = "trigger_on_press",
     name = "trigger on press",
     options = {"no", "yes"}
   }
 
-
-  params:add {
-    type = "option",
-    id = "trigger_on_reset",
-    name = "trigger on reset",
-    options = {"no", "yes"}
-  }
 
   params:add {
     type = "option",
@@ -82,9 +76,6 @@ setup_params = function(mp)
       mp.grid:set_monobright(value)
     end
   }
-
-
-  params:add_separator()
 
 end
 
