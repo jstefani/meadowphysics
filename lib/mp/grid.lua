@@ -11,8 +11,77 @@ local voice_count = 8
 local monobright = false
 local MONO_ON_THRESHOLD = 3
 
-function grid:set_monobright(on)
-  monobright = on and true or false
+-- Serial prefixes of grids without variable brightness. Monome serials are
+-- model-prefixed: the 40h series and the pre-2011 m64/m128/m256 walnut and
+-- greyscale editions are all monobright. Varibright grids (2011+) report
+-- m1000xxx / m360xxx style serials, so anything unmatched is assumed
+-- varibright and can be corrected with the "use monobright grid" param.
+-- The m64/m128/m256 patterns require the hyphen the pre-2011 editions use;
+-- wrongly flattening a varibright grid is worse than missing a monobright
+-- one, which is one param away from being fixed.
+local MONOBRIGHT_SERIAL_PATTERNS = {
+  "^m40h",     -- 40h series
+  "^m64%-%d",  -- 64 (walnut / greyscale)
+  "^m128%-%d", -- 128 (walnut / greyscale)
+  "^m256%-%d", -- 256 (walnut / greyscale)
+  "^m0000",    -- early 40h-era serials
+}
+
+-- Does this grid's serial/name match a known monobright model?
+-- Accepts a vport or a raw device; serial lives on the underlying .device,
+-- the vport only carries a name of the form "<friendly name> <serial>".
+function grid.detect_monobright(device)
+  if not device then return false end
+  local dev = device.device or device
+  local serial = tostring(dev.serial or device.serial or ""):lower()
+  local name = tostring(dev.name or device.name or ""):lower()
+  for _, pattern in ipairs(MONOBRIGHT_SERIAL_PATTERNS) do
+    if serial:match(pattern) or name:match(pattern) then return true end
+    -- the name carries the serial appended, so also look for the model
+    -- anywhere in it, not only at the start
+    if name:match("%f[%w]" .. pattern:gsub("^%^", "")) then return true end
+  end
+  return false
+end
+
+-- Serial and name as the detector sees them, for troubleshooting from the
+-- maiden repl: print(mp.grid.identify())
+function grid.identify()
+  local dev = g.device or g
+  return string.format("serial=%q name=%q %dx%d -> %s",
+    tostring(dev.serial or ""), tostring(dev.name or g.name or ""),
+    tonumber(g.cols) or 0, tonumber(g.rows) or 0,
+    grid.detect_monobright(g) and "monobright" or "varibright")
+end
+
+-- Apply the "use monobright grid" param: 1 = auto (detect), 2 = no, 3 = yes
+function grid:set_monobright(setting)
+  if setting == 2 then
+    monobright = false
+  elseif setting == 3 then
+    monobright = true
+  else
+    monobright = grid.detect_monobright(g)
+  end
+end
+
+function grid:is_monobright()
+  return monobright
+end
+
+-- Grids attach asynchronously, so when the param is first applied g.device
+-- is usually still nil and auto resolves to varibright. Re-run detection
+-- whenever the attached device changes identity. Called from draw(), which
+-- runs every clock tick, so this self-corrects right after the grid appears.
+function grid:poll_monobright()
+  local dev = g.device
+  local id = dev and (dev.serial or dev.name) or nil
+  if id ~= self._detected_device_id then
+    self._detected_device_id = id
+    local setting = (params and params.lookup and params.lookup["monobright"])
+      and params:get("monobright") or 1
+    self:set_monobright(setting)
+  end
 end
 
 local function led(x, y, l)
@@ -45,6 +114,7 @@ end
 
 
 function grid:draw(mp)
+  self:poll_monobright()
   g:all(0)
 
   if(mp.focus == "RESETS") then

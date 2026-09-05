@@ -20,8 +20,10 @@ https://monome.org/docs/modular/ansible/
 
 ## monobright grids
 
-Using a 40h or series (monobright) grid? Set PARAMS > MEADOWPHYSICS >
-`use monobright grid` to `yes`. Monobright hardware only lights leds above a
-brightness threshold, so the dim levels this script draws never show. The
-option maps playhead, selection, status and rule glyphs to full brightness
-and dim hints/ranges to off. Varibright drawing is untouched when it is `no`.
+Monobright hardware (40h, pre-2011 series 64/128/256) only lights leds above
+a brightness threshold, so the dim levels this script draws never show.
+PARAMS > `use monobright grid` defaults to `auto`, which
+detects those models from the grid's serial. If detection misses your grid,
+set it to `yes`; `no` forces varibright drawing. In monobright mode the
+playhead, selection, status and rule glyphs are drawn at full brightness and
+dim hints/ranges are turned off. Varibright drawing is otherwise untouched.
