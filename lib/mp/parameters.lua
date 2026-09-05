@@ -1,6 +1,6 @@
 setup_params = function(mp)
 
-  params:add_group("MEADOWPHYSICS ", 9)
+  params:add_group("MEADOWPHYSICS ", 10)
 
   -- Voices
   params:add {
@@ -69,6 +69,16 @@ setup_params = function(mp)
     id = "trigger_on_reset",
     name = "trigger on reset",
     options = {"no", "yes"}
+  }
+
+  params:add {
+    type = "option",
+    id = "monobright",
+    name = "use monobright grid",
+    options = {"no", "yes"},
+    action = function(value)
+      mp.grid:set_monobright(value == 2)
+    end
   }
 
 
