@@ -4,9 +4,20 @@ local tabutil = require "tabutil"
 local gridscales = {}
 gridscales.__index = gridscales
 
-gridscales.L0 = 4
-gridscales.L1 = 8
-gridscales.L2 = 12
+-- led levels (varibright defaults). see gridscales.set_monobright
+gridscales.L0 = 4  -- dim: unselected scales
+gridscales.L1 = 8  -- mid: divider
+gridscales.L2 = 12 -- bright: selected scale, scale notes
+
+-- monobright grids only light leds above a level threshold.
+-- remap: dim -> off, everything else -> full. off restores varibright levels.
+function gridscales.set_monobright(on)
+	if on then
+		gridscales.L0, gridscales.L1, gridscales.L2 = 0, 15, 15
+	else
+		gridscales.L0, gridscales.L1, gridscales.L2 = 4, 8, 12
+	end
+end
 
 gridscales.NOTE_NAMES_OCTAVE = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"}
 gridscales.NOTES = {}

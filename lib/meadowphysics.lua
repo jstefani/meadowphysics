@@ -17,9 +17,21 @@ mp.MODE_POSITION = 0
 mp.MODE_SPEED = 1
 mp.MODE_RULES = 2
 
-mp.L0 = 4
-mp.L1 = 8
-mp.L2 = 12
+-- led levels (varibright defaults). see mp.set_monobright
+mp.L0 = 4  -- dim: ranges, off-state toggles
+mp.L1 = 8  -- mid: count, speed, sync
+mp.L2 = 12 -- bright: position, active
+mp.LI = 2  -- indicator: row running, sound on
+
+-- monobright grids (40h, series) only light leds above a level threshold.
+-- remap: dim -> off, everything else -> full. off restores varibright levels.
+function mp.set_monobright(on)
+	if on then
+		mp.L0, mp.L1, mp.L2, mp.LI = 0, 15, 15, 15
+	else
+		mp.L0, mp.L1, mp.L2, mp.LI = 4, 8, 12, 2
+	end
+end
 
 local gridbuf = require "gridbuf"
 local gbuf = gridbuf.new(16, 8)
@@ -320,7 +332,7 @@ function mp:gridredraw(g)
 		for i=1,8 do 
 			if self.position[i] >= 1 then gbuf:led_level_set(self.position[i], i, mp.L0) end
 
-			if self.position[i] ~= -1 then gbuf:led_level_set(3, i, 2) end
+			if self.position[i] ~= -1 then gbuf:led_level_set(3, i, mp.LI) end
 
 			for j=self.smin[i],self.smax[i] do
 				gbuf:led_level_set(j+9, i, mp.L0)
@@ -328,7 +340,7 @@ function mp:gridredraw(g)
 
 			gbuf:led_level_set(self.speed[i]+9, i, mp.L1)
 
-			if self.sound == 1 then gbuf:led_level_set(5, i, 2) end
+			if self.sound == 1 then gbuf:led_level_set(5, i, mp.LI) end
 
 			if (self.toggle[self.edit_row] & (1 << i)) > 0 then
 				gbuf:led_level_set(6, i, mp.L2)

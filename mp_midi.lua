@@ -9,6 +9,9 @@
 -- enc2  root note
 -- enc3  bpm
 --
+-- monobright grid (40h, series):
+-- PARAMS > use monobright grid
+--
 
 engine.name = "PolyPerc"
 
@@ -206,6 +209,19 @@ function init()
 		id = "gain",
 		controlspec = controlspec.new(0,4,'lin',0,1,''),
     action = function(x) engine.gain(x) end
+	}
+
+	-- grid
+	params:add {
+		type = "option",
+		id = "monobright",
+		name = "use monobright grid",
+		options = {"no", "yes"},
+		default = 1,
+		action = function(value)
+			MeadowPhysics.set_monobright(value == 2)
+			GridScales.set_monobright(value == 2)
+		end
 	}
 
 	params:default()
